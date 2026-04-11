@@ -15,6 +15,7 @@ var domHumidity = document.querySelectorAll(".info-humidity h1 span")[0]
 var domVisibility = document.querySelectorAll(".info-visibility h1 span")[0]
 var domSunrise = document.querySelectorAll(".info-sunrise h1 span")[0]
 var domSunset = document.querySelectorAll(".info-sunset h1 span")[0]
+var domMap = document.querySelectorAll(".map iframe")[0]
 
 var domBgOverlay = document.querySelectorAll(".bg-overlay")[0]
 
@@ -87,13 +88,22 @@ async function getData(value) {
     var response = await fetch(api)
     var result = await response.json()
 
-    return result
+    if(response.ok == false){
+        return false
+    } else if (response.ok == true){
+        return result
+    }
 }
 
 async function showData(value){
 
     var data = await getData(value)
     // console.log(data)
+
+    if (data == false){
+        alert("Error! City Not Found")
+        return
+    }
     
     var city = data.name
     var country = data.sys.country
@@ -137,7 +147,8 @@ async function showData(value){
     domVisibility.textContent = visibility
     domSunrise.textContent = sunrise
     domSunset.textContent = sunset
-
+    
+    domMap.src = "https://www.google.com/maps?q=" + coordLat + "," + coordLon + "&z=8&output=embed"
 
     // console.log(
     //     city + " " +
@@ -162,3 +173,17 @@ domForm.addEventListener('submit', function(e){
     showData(domInput.value)
     input.value = ''
 })
+
+
+
+
+async function forecast() {
+    var api = `https://api.openweathermap.org/data/2.5/forecast?q=Bali&appid=f348829749c2c46e7b9e8116cadf4ce6&units=metric`
+
+    var response = await fetch(api)
+    var result = await response.json()
+
+    console.log(result)
+}
+
+// forecast()
